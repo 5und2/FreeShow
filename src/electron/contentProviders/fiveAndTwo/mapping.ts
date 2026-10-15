@@ -1,6 +1,6 @@
 import { uid } from "uid"
-import type { Show, SlideData } from "../../../types/Show"
-import type { PlansDocument, WireAgendaRow, WireSongVersion } from "./wire"
+import type { Chords, Line, Show, SlideData } from "../../../types/Show"
+import type { PlansDocument, WireAgendaRow, WireLine, WireSongVersion } from "./wire"
 
 const ITEM_STYLE = "left:50px;top:120px;width:1820px;height:840px;"
 export const LAYOUT_ID = "fiveandtwo"
@@ -19,6 +19,22 @@ const GLOBAL_GROUPS: [RegExp, string][] = [
 
 function globalGroupOf(label: string): string | undefined {
     return GLOBAL_GROUPS.find(([pattern]) => pattern.test(label.trim()))?.[1]
+}
+
+/** `A[G]mazing grace` gives a G at position 1 of the lyrics. Chords that do not line up with the lyrics are dropped. */
+export function chordsOf(line: WireLine): Chords[] {
+    const chords: Chords[] = []
+    let text = ""
+    for (const [token, chord] of line.chordPro.matchAll(/\[([^\]]*)\]|[^[]+|\[/g)) {
+        if (chord === undefined) text += token
+        else if (chord.trim()) chords.push({ id: uid(5), pos: text.length, key: chord.trim() })
+    }
+    return text === line.lyrics ? chords : []
+}
+
+function lineOf(line: WireLine): Line {
+    const chords = chordsOf(line)
+    return { align: "", text: [{ style: "", value: line.lyrics }], ...(chords.length ? { chords } : {}) }
 }
 
 /**
@@ -43,7 +59,7 @@ export function buildSongShow(song: WireSongVersion, category: string): Show {
                 color: null,
                 settings: {},
                 notes: "",
-                items: lines.length ? [{ style: ITEM_STYLE, lines: lines.map((line) => ({ align: "", text: [{ style: "", value: line.lyrics }] })) }] : []
+                items: lines.length ? [{ style: ITEM_STYLE, lines: lines.map(lineOf) }] : []
             }
         })
 
