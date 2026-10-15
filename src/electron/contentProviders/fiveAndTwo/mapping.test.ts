@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import example from "./__fixtures__/plans-v1.example.json"
-import { chordsOf, plansToProjects } from "./mapping"
+import { chordsOf, cursorTargetOf, plansToProjects, slideRefOf } from "./mapping"
 import { parsePlansDocument, type PlansDocument } from "./wire"
 
 // The fixture is 5and2's own contract example (5und2/5and2app libs/modules/presentation/src/__fixtures__).
@@ -67,6 +67,28 @@ describe("5and2 plans to FreeShow projects", () => {
         expect(chordsOf({ lyrics: "Holy", chordPro: "[D]Holy" }).map((chord) => chord.key)).toEqual(["D"])
         expect(chordsOf({ lyrics: "Holy, holy", chordPro: "[D]Holy" })).toEqual([])
         expect(chordsOf({ lyrics: "Holy", chordPro: "[D]Ho[ly" })).toEqual([])
+    })
+
+    it("names each slide by its part and slide index, so the output slide can be reported", () => {
+        const { shows } = plansToProjects(plans)
+        const grosserGott = shows.find((show) => show.id.endsWith("5b02"))!
+        const layout = grosserGott.layouts[grosserGott.settings.activeLayout].slides
+        expect(layout.map((slide) => slideRefOf(slide.id))).toEqual([
+            { songVersionId: "00000000-0000-4000-8000-000000005b02", partId: "p1", slideIndex: 0 },
+            { songVersionId: "00000000-0000-4000-8000-000000005b02", partId: "p2", slideIndex: 0 },
+            { songVersionId: "00000000-0000-4000-8000-000000005b02", partId: "p1", slideIndex: 0 }
+        ])
+        expect(slideRefOf("a1b2c")).toBeNull()
+    })
+
+    it("finds the project item a cursor points at, also for a song played twice", () => {
+        const [event] = plans.events
+        const song = event.agenda[2]
+        const twice = { ...event, agenda: [...event.agenda, { ...song, id: "00000000-0000-4000-8000-00000000a007" }] }
+        expect(cursorTargetOf(twice, song.id)).toEqual({ itemId: "fiveandtwosong_00000000-0000-4000-8000-000000005a01", occurrence: 0 })
+        expect(cursorTargetOf(twice, "00000000-0000-4000-8000-00000000a007")).toEqual({ itemId: "fiveandtwosong_00000000-0000-4000-8000-000000005a01", occurrence: 1 })
+        expect(cursorTargetOf(twice, "00000000-0000-4000-8000-00000000a005")).toEqual({ itemId: "00000000-0000-4000-8000-00000000a005", occurrence: 0 })
+        expect(cursorTargetOf(twice, null)).toBeNull()
     })
 
     it("refreshes one event without the songs of others", () => {

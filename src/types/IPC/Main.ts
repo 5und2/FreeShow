@@ -4,6 +4,7 @@ import type { Stats } from "fs"
 import type { Bible } from "json-bible/lib/Bible"
 import type { SyncProviderId } from "../../electron/cloud/syncManager"
 import type { ContentFile, ContentLibraryCategory, ContentProviderId, MediaLicense } from "../../electron/contentProviders/base/types"
+import type { FiveAndTwoLiveState } from "../../electron/contentProviders/fiveAndTwo/FiveAndTwoProvider"
 import type { PCOFolderTreeNode } from "../../electron/contentProviders/planningCenter/request"
 import type { _store } from "../../electron/data/store"
 import type { EncoderDetection } from "../../electron/streaming/encoderDetection"
@@ -161,6 +162,7 @@ export enum Main {
     PCO_FETCH_SERVICE_TREE = "PCO_FETCH_SERVICE_TREE",
     PCO_LOAD_PLAN = "PCO_LOAD_PLAN",
     ONSTAGE_LOAD_SERVICE = "ONSTAGE_LOAD_SERVICE",
+    FIVEANDTWO_LIVE = "FIVEANDTWO_LIVE",
     ONSTAGE_GET_TEAMS = "ONSTAGE_GET_TEAMS",
     ONSTAGE_SWITCH_TEAM = "ONSTAGE_SWITCH_TEAM",
     // Content Library
@@ -278,6 +280,7 @@ export interface MainSendPayloads {
     [Main.PCO_FETCH_SERVICE_TREE]: undefined
     [Main.PCO_LOAD_PLAN]: { serviceTypeId: string; planId: string }
     [Main.ONSTAGE_LOAD_SERVICE]: { serviceId: string; data?: any }
+    [Main.FIVEANDTWO_LIVE]: FiveAndTwoLiveState
     [Main.ONSTAGE_GET_TEAMS]: undefined
     [Main.ONSTAGE_SWITCH_TEAM]: { teamId: string }
     // Content Library

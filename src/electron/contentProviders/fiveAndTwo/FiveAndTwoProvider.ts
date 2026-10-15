@@ -1,8 +1,10 @@
 import { ContentProvider } from "../base/ContentProvider"
 import { FIVEANDTWO_PORT, FIVEANDTWO_URL, fiveAndTwoAccess, fiveAndTwoConnect, fiveAndTwoDisconnect, type FiveAndTwoScopes } from "./connect"
+import { fiveAndTwoLive, fiveAndTwoStopLive, type FiveAndTwoLiveState } from "./live"
 import { fiveAndTwoLoadServices } from "./request"
 
 export type { FiveAndTwoScopes } from "./connect"
+export type { FiveAndTwoLiveState } from "./live"
 
 type FiveAndTwoAuthDataResolved = {
     access_token: string
@@ -41,7 +43,12 @@ export class FiveAndTwoProvider extends ContentProvider<FiveAndTwoScopes, FiveAn
     }
 
     disconnect(scope: FiveAndTwoScopes = "presentation"): void {
+        fiveAndTwoStopLive()
         fiveAndTwoDisconnect(scope)
+    }
+
+    live(state: FiveAndTwoLiveState): void {
+        fiveAndTwoLive(state)
     }
 
     apiRequest(): Promise<any> {

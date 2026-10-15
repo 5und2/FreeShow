@@ -419,6 +419,8 @@
 
     <MaterialToggleSwitch label="settings.auto_sync_startup" checked={$contentProviderData.fiveandtwo?.autoSync !== false} on:change={(e) => updateProvider("fiveandtwo", "autoSync", e.detail)} />
 
+    <MaterialToggleSwitch label="Follow the 5and2 run-of-show live" checked={$contentProviderData.fiveandtwo?.liveSync !== false} on:change={(e) => updateProvider("fiveandtwo", "liveSync", e.detail)} />
+
     <MaterialDropdown label="Song origin" options={providerOriginOptions} value={$contentProviderData.fiveandtwo?.songOrigin || ""} on:change={(e) => updateProvider("fiveandtwo", "songOrigin", e.detail)} />
 {/if}
 

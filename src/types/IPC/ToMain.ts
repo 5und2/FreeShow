@@ -26,6 +26,7 @@ export enum ToMain {
     // Unified provider callbacks
     PROVIDER_CONNECT = "PROVIDER_CONNECT",
     PROVIDER_PROJECTS = "PROVIDER_PROJECTS",
+    FIVEANDTWO_CURSOR = "FIVEANDTWO_CURSOR",
     WEBSOCKET = "WEBSOCKET",
     AUDIO_METADATA = "AUDIO_METADATA",
     GET_DYNAMIC_VALUES = "GET_DYNAMIC_VALUES",
@@ -59,7 +60,8 @@ export interface ToMainSendPayloads {
     [ToMain.GPU_HEALTH]: { issue: "compositing" | "video-decode"; platform: string; vendorName: string; vaDriverMissing: boolean; packages: string[] }
     // Unified provider callbacks
     [ToMain.PROVIDER_CONNECT]: { providerId: ContentProviderId; success: boolean; isFirstConnection?: boolean }
-    [ToMain.PROVIDER_PROJECTS]: { providerId: ContentProviderId; categoryName: string; shows: any; projects: any; pcoPlans?: { planId: string; serviceTypeId: string; name: string; date: string }[] }
+    [ToMain.PROVIDER_PROJECTS]: { providerId: ContentProviderId; categoryName: string; shows: any; projects: any; pcoPlans?: { planId: string; serviceTypeId: string; name: string; date: string }[]; keepExistingShows?: boolean }
+    [ToMain.FIVEANDTWO_CURSOR]: { projectId: string; itemId: string; occurrence: number }
     [ToMain.WEBSOCKET]: "connected"
     [ToMain.AUDIO_METADATA]: { filePath: string; metadata: ICommonTagsResult }
     [ToMain.GET_DYNAMIC_VALUES]: string[]
