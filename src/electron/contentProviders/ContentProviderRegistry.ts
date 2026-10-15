@@ -5,7 +5,7 @@ import type { ContentProvider } from "./base/ContentProvider"
 import { ContentProviderFactory } from "./base/ContentProvider"
 import type { ContentProviderId } from "./base/types"
 import { ChurchAppsProvider } from "./churchApps/ChurchAppsProvider"
-import { FiveAndTwoProvider } from "./fiveAndTwo/FiveAndTwoProvider"
+import { FiveAndTwoProvider, type FiveAndTwoLiveState } from "./fiveAndTwo/FiveAndTwoProvider"
 import { OnStageProvider } from "./onStage/OnStageProvider"
 import { PlanningCenterProvider } from "./planningCenter/PlanningCenterProvider"
 import type { PCOFolderTreeNode } from "./planningCenter/request"
@@ -200,6 +200,14 @@ export class ContentProviderRegistry {
     static async getPcoPusherAuth(socketId: string, channelName: string, serviceTypeId: string): Promise<{ auth: string; channel_data?: string } | null> {
         this.ensureInitialized()
         return this.getProvider<PlanningCenterProvider>("planningcenter")?.getPusherAuth?.(socketId, channelName, serviceTypeId) ?? null
+    }
+
+    /**
+     * Follow the active 5and2 project's live stream and report the slide on the output
+     */
+    static fiveAndTwoLive(state: FiveAndTwoLiveState): void {
+        this.ensureInitialized()
+        this.getProvider<FiveAndTwoProvider>("fiveandtwo")?.live(state)
     }
 
     /**

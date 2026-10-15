@@ -80,6 +80,21 @@ export type PlansDocument = {
     songs: WireSongVersion[]
 }
 
+/** Where the run-of-show stands. `leader`: somebody moved it. `clock`: nobody did, it follows the agenda times. */
+export type WireCursor = { eventId: string; agendaItemId: string | null; source: "leader" | "clock" }
+
+/** The last frame before the server closes the stream. Reconnecting does not help. */
+export type WireEnd = { reason: "revoked" | "gone" }
+
+/** Each frame replaces the consumer's copy, so a reconnect is the same as a first connect. `plan` carries exactly one event. */
+export type LiveFrame = { event: "plan"; data: PlansDocument } | { event: "cursor"; data: WireCursor } | { event: "end"; data: WireEnd }
+
+/** `slideIndex` indexes into the part's `slides`. */
+export type WireSlideRef = { songVersionId: string; partId: string; slideIndex: number }
+
+/** Body of POST /events/{id}/live. `null`: the device shows no song slide now. */
+export type SlideReport = { slide: WireSlideRef | null }
+
 /** Rejects a document of another schema version or without its top-level shape. */
 export function parsePlansDocument(input: any): PlansDocument | null {
     if (input?.schema !== PRESENTATION_SCHEMA) return null

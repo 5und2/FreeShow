@@ -90,15 +90,26 @@ The revoke endpoint takes `{ "token": "…" }` (RFC 7009) and always answers `20
 | Path | Contents |
 | --- | --- |
 | `src/electron/contentProviders/fiveAndTwo/connect.ts` | The PKCE flow, token storage, revoke on disconnect, and the HTTP helper. |
-| `src/electron/contentProviders/fiveAndTwo/request.ts` | Fetches `/plans?days=28`. On a `401` it forgets the token and asks the user to connect again. |
-| `src/electron/contentProviders/fiveAndTwo/mapping.ts` | A pure mapping from a plans document to FreeShow shows and projects. |
+| `src/electron/contentProviders/fiveAndTwo/request.ts` | Fetches `/plans?days=28` with the last `ETag`, and reuses the cached document on a `304`. On a `401` it forgets the token and asks the user to connect again. |
+| `src/electron/contentProviders/fiveAndTwo/live.ts` | Follows the live stream of one event, follows the leader's cursor, and posts slide reports. |
+| `src/electron/contentProviders/fiveAndTwo/sse.ts` | Splits the stream into server-sent events and checks each frame. |
+| `src/electron/contentProviders/fiveAndTwo/deliver.ts` | Sends projects and shows to the frontend, and skips a `plan` frame that FreeShow already has. |
+| `src/electron/contentProviders/fiveAndTwo/mapping.ts` | A pure mapping from a plans document to FreeShow shows and projects, from a slide id to a 5and2 slide, and from a cursor to a project item. |
 | `src/electron/contentProviders/fiveAndTwo/wire.ts` | The wire types without zod, because FreeShow does not depend on zod. |
-| `src/electron/contentProviders/fiveAndTwo/mapping.test.ts` | Parses the contract example and checks the mapping. |
+| `src/frontend/utils/fiveAndTwoLive.ts` | Sends main the active 5and2 project and the slide on the output, and selects the item the leader's cursor points at. |
+| `src/electron/contentProviders/fiveAndTwo/*.test.ts` | Parse the contract example, check the mapping and the frame parser, and run sync and the live stream against a stand-in 5and2 server. |
 
-The provider makes one project per event, with id `fiveandtwo_<eventId>`, in a folder named after the organisation. It makes one show per song version, with id `fiveandtwosong_<songVersionId>`. Sections and items become project sections. A song's parts become groups, and its `sequence` becomes the layout. Slides show `lyrics` without chords.
+The provider makes one project per event, with id `fiveandtwo_<eventId>`, in a folder named after the organisation. It makes one show per song version, with id `fiveandtwosong_<songVersionId>`. Sections and items become project sections. A song's parts become groups, and its `sequence` becomes the layout. A slide has the id `<songVersionId>_<partId>_<slideIndex>`. Slides show `lyrics`. The chords of `chordPro` are kept on each line but stay turned off on the text item, so they appear only in chord views and stage displays.
+
+While a 5and2 project is the active project, FreeShow follows that event's live stream:
+
+- A `plan` frame that differs from what FreeShow last got replaces the project. Shows that FreeShow already has are kept without a question, because the text of a song version never changes.
+- A `cursor` frame from the `leader` selects that item in the project. A `clock` cursor is ignored.
+- When the output changes, FreeShow reports the slide it shows, or `null` for anything that is not a 5and2 slide.
+- An `end` frame stops the stream. `revoked` also forgets the token. A dropped stream, or no heartbeat for 60 seconds, reconnects with a back-off from 5 to 60 seconds.
+
+The **Follow the 5and2 run-of-show live** switch in the connection settings turns the stream and the reports off.
 
 Set `FIVEANDTWO_URL` to point FreeShow at another 5and2 origin, for example `http://localhost:3000` for a local dev server.
-
-The live stream, slide reports, `ETag` caching, and chords are not built yet.
 
 This fork is meant to become a pull request to `ChurchApps/FreeShow`. Open that pull request only when the maintainer asks for it.

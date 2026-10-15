@@ -69,8 +69,11 @@ import { driveConnect } from "./drive"
 import { convertBackgrounds, getFilteredAudioChannels } from "./remoteTalk"
 import { send } from "./request"
 import { arrayToObject, eachConnection, filterObjectArray, sendData, timedout } from "./sendData"
+import { startFiveAndTwoLive } from "./fiveAndTwoLive"
 
 export function storeSubscriber() {
+    startFiveAndTwoLive()
+
     shows.subscribe(async (data) => {
         if (await hasNewerUpdate("LISTENER_SHOWS", 800)) return
 

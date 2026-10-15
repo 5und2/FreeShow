@@ -38,8 +38,10 @@ export class FiveAndTwoHttpError extends Error {
     }
 }
 
-/** http as well as https, so a local 5and2 dev server (FIVEANDTWO_URL=http://localhost:3000) works. */
-export function fiveAndTwoFetch(url: string, options: { method?: "GET" | "POST"; token?: string; body?: object } = {}): Promise<any> {
+export type FiveAndTwoResponse = { status: number; etag: string | undefined; body: any }
+
+/** http as well as https, so a local 5and2 dev server (FIVEANDTWO_URL=http://localhost:3000) works. A 304 resolves with a null body. */
+export function fiveAndTwoFetch(url: string, options: { method?: "GET" | "POST"; token?: string; body?: object; ifNoneMatch?: string } = {}): Promise<FiveAndTwoResponse> {
     const target = new URL(url)
     const body = options.body ? JSON.stringify(options.body) : ""
     const client = target.protocol === "http:" ? http : https
@@ -52,6 +54,7 @@ export function fiveAndTwoFetch(url: string, options: { method?: "GET" | "POST";
                 headers: {
                     Accept: "application/json",
                     ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+                    ...(options.ifNoneMatch ? { "If-None-Match": options.ifNoneMatch } : {}),
                     ...(body ? { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) } : {})
                 },
                 timeout: 30000
@@ -63,7 +66,7 @@ export function fiveAndTwoFetch(url: string, options: { method?: "GET" | "POST";
                     const status = response.statusCode || 0
                     if (status >= 400) return reject(new FiveAndTwoHttpError(status, data))
                     try {
-                        resolve(data ? JSON.parse(data) : null)
+                        resolve({ status, etag: response.headers.etag, body: data ? JSON.parse(data) : null })
                     } catch (err) {
                         reject(err)
                     }
@@ -130,7 +133,7 @@ function startAuthentication(scope: FiveAndTwoScopes): Promise<FiveAndTwoAuthDat
             }
 
             try {
-                const token: OAuthTokenResponse = await fiveAndTwoFetch(FIVEANDTWO_URL + PRESENTATION_OAUTH.tokenPath, {
+                const { body: token }: { body: OAuthTokenResponse } = await fiveAndTwoFetch(FIVEANDTWO_URL + PRESENTATION_OAUTH.tokenPath, {
                     method: "POST",
                     body: { grant_type: "authorization_code", code, client_id: PRESENTATION_OAUTH.clientId, redirect_uri: redirectUri, code_verifier: codeVerifier }
                 })
@@ -166,6 +169,12 @@ export async function fiveAndTwoConnect(scope: FiveAndTwoScopes = "presentation"
         return access
     }
     return authenticate(scope)
+}
+
+/** Revoked in 5and2 or unused for 90 days: there is no refresh token, only a new connection. */
+export function fiveAndTwoConnectionEnded(scope: FiveAndTwoScopes = "presentation") {
+    setContentProviderAccess("fiveandtwo", scope, null)
+    sendToMain(ToMain.ALERT, "The 5and2 connection has ended. Please connect to 5and2 again.")
 }
 
 export function fiveAndTwoDisconnect(scope: FiveAndTwoScopes = "presentation") {

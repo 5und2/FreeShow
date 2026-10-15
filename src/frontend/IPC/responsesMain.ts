@@ -97,6 +97,7 @@ import { updateSettings, updateSyncedSettings, updateThemeValues } from "../util
 import type { MainReturnPayloads } from "./../../types/IPC/Main"
 import { Main } from "./../../types/IPC/Main"
 import { sendMain } from "./main"
+import { followFiveAndTwoCursor } from "../utils/fiveAndTwoLive"
 
 type MainHandler<ID extends Main | ToMain> = (data: ID extends keyof ToMainSendPayloads ? ToMainSendPayloads[ID] : ID extends keyof MainReturnPayloads ? Awaited<MainReturnPayloads[ID]> : undefined) => void
 export type MainResponses = {
@@ -352,6 +353,7 @@ export const mainResponses: MainResponses = {
             }
         }
     },
+    [ToMain.FIVEANDTWO_CURSOR]: (data) => followFiveAndTwoCursor(data),
     [ToMain.PROVIDER_PROJECTS]: async (data) => {
         if (!data.projects) return
 
@@ -425,7 +427,7 @@ export const mainResponses: MainResponses = {
                 const showData = get(showsCache)[linkedShow.id]
                 const hasSlides = Object.keys(showData.slides || {}).length > 0
 
-                const useLocal = !hasSlides || songOrigin === "online" ? false : songOrigin === "local" || (await confirmCustom(`This show already exists: ${linkedShow.name}.<br><br>Would you like to use the local version instead of the one from ${providerName}?`))
+                const useLocal = !hasSlides || songOrigin === "online" ? false : data.keepExistingShows || songOrigin === "local" || (await confirmCustom(`This show already exists: ${linkedShow.name}.<br><br>Would you like to use the local version instead of the one from ${providerName}?`))
                 if (useLocal) continue
 
                 downloadShow(linkedShow.id)
@@ -434,7 +436,8 @@ export const mainResponses: MainResponses = {
 
             // find existing show with same name and ask to replace
             const showName = show?.name?.toLowerCase() || ""
-            const existingShow = allShows.find(({ id: existingId, name }) => existingId !== id && name?.toLowerCase() === showName)
+            // a live update must not stop the service with a question
+            const existingShow = data.keepExistingShows ? undefined : allShows.find(({ id: existingId, name }) => existingId !== id && name?.toLowerCase() === showName)
             // const existingShowHasContent = existingShow && (await loadShows([existingShow.id])) && getSlidesText(get(showsCache)[existingShow.id].slides)
             if (existingShow && songOrigin !== "online") {
                 const useLocal = songOrigin === "local" || (await confirmCustom(`There is an existing show with the same name: ${existingShow.name}.<br><br>Would you like to use the local version instead of the one from ${providerName}?`))
