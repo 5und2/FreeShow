@@ -93,6 +93,7 @@
     $: currentProject = $activeProject ? $projects[$activeProject] : null
     $: currentProjectPcoFolderId = $activeProject ? ($contentProviderData?.planningcenter?.availablePlans as { planId: string; serviceTypeId: string }[] | undefined)?.find((p) => p.planId === $activeProject)?.serviceTypeId : undefined
     $: currentProjectIsOnStage = !!$providerConnections.onstage && (currentProject?.origin === "onstage" || $activeProject?.startsWith("onstage_"))
+    $: currentProjectIsFiveAndTwo = !!$providerConnections.fiveandtwo && !!$activeProject?.startsWith("fiveandtwo_")
 
     function createProject(folder = false) {
         let parent = interactedFolder || ($folders[currentProject?.parent || ""] ? currentProject?.parent || "/" : "/")
@@ -342,6 +343,10 @@
         sendMain(Main.ONSTAGE_LOAD_SERVICE, { serviceId, data: $contentProviderData.onstage })
     }
 
+    function refreshFiveAndTwoProject(projectId: string) {
+        sendMain(Main.PROVIDER_LOAD_SERVICES, { providerId: "fiveandtwo", data: { eventId: projectId.replace("fiveandtwo_", "") } })
+    }
+
     function handleKeydown(e: KeyboardEvent) {
         if (addMenuOpen && e.key === "Escape") {
             addMenuOpen = false
@@ -386,6 +391,14 @@
                                 <div class="projectDropdown" transition:fade={{ duration: 100 }} role="none" on:click={() => (showProjectDropdown = false)}>
                                     {#if currentProjectIsOnStage && $activeProject}
                                         <MaterialButton title="Sync with OnStage" icon="refresh" on:click={() => refreshOnStageProject($activeProject)} white>
+                                            <T id="cloud.sync" />
+                                        </MaterialButton>
+
+                                        <div class="DIVIDER"></div>
+                                    {/if}
+
+                                    {#if currentProjectIsFiveAndTwo && $activeProject}
+                                        <MaterialButton title="Sync with 5and2" icon="refresh" on:click={() => refreshFiveAndTwoProject($activeProject)} white>
                                             <T id="cloud.sync" />
                                         </MaterialButton>
 

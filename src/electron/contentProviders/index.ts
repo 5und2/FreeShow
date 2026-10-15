@@ -20,6 +20,7 @@ export { ChurchAppsProvider } from "./churchApps/ChurchAppsProvider"
 export { PlanningCenterProvider } from "./planningCenter/PlanningCenterProvider"
 export { OnStageProvider } from "./onStage/OnStageProvider"
 export { CanvaProvider } from "./canva/CanvaProvider"
+export { FiveAndTwoProvider } from "./fiveAndTwo/FiveAndTwoProvider"
 
 // Registry and legacy functions
 export {

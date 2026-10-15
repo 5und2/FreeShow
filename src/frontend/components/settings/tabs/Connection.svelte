@@ -279,7 +279,7 @@
     <MaterialToggleSwitch label="" checked={$special.remoteController} on:change={(e) => toggleRemoteController(e.detail)} />
 </InputRow>
 
-{#if !$providerConnections.planningcenter && (!$providerConnections.churchApps || cloudOnly.churchApps) && !$providerConnections.amazinglife && !$providerConnections.onstage}
+{#if !$providerConnections.planningcenter && (!$providerConnections.churchApps || cloudOnly.churchApps) && !$providerConnections.amazinglife && !$providerConnections.onstage && !$providerConnections.fiveandtwo}
     <!-- No provider connected - show connection options -->
     <Title label="settings.content_provider" icon="list" />
 
@@ -304,6 +304,12 @@
     <InputRow>
         <MaterialButton on:click={() => contentProviderConnect("onstage")} style="flex: 1;" icon="login">
             <T id="settings.connect_to" replace={["OnStage"]} />
+        </MaterialButton>
+    </InputRow>
+
+    <InputRow>
+        <MaterialButton on:click={() => contentProviderConnect("fiveandtwo")} style="flex: 1;" icon="login">
+            <T id="settings.connect_to" replace={["5and2"]} />
         </MaterialButton>
     </InputRow>
 {:else if $providerConnections.planningcenter}
@@ -395,6 +401,25 @@
     {/if}
 
     <MaterialDropdown label="Song origin" options={providerOriginOptions} value={$contentProviderData.onstage?.songOrigin || ""} on:change={(e) => updateProvider("onstage", "songOrigin", e.detail)} />
+{:else if $providerConnections.fiveandtwo}
+    <!-- 5and2 connected -->
+    <Title label="Content Provider: 5and2" icon="list" />
+
+    <InputRow>
+        <MaterialButton on:click={() => contentProviderConnect("fiveandtwo")} style="flex: 1;border-bottom: 2px solid var(--connected) !important;" icon="logout">
+            <T id="settings.disconnect_from" replace={["5and2"]} />
+        </MaterialButton>
+        <MaterialButton icon="cloud_sync" on:click={syncContentProvider}>
+            <T id="cloud.sync" />
+        </MaterialButton>
+        <MaterialButton on:click={() => sendMain(Main.URL, "https://5and2.app")} title="5and2" white>
+            <Icon id="launch" white />
+        </MaterialButton>
+    </InputRow>
+
+    <MaterialToggleSwitch label="settings.auto_sync_startup" checked={$contentProviderData.fiveandtwo?.autoSync !== false} on:change={(e) => updateProvider("fiveandtwo", "autoSync", e.detail)} />
+
+    <MaterialDropdown label="Song origin" options={providerOriginOptions} value={$contentProviderData.fiveandtwo?.songOrigin || ""} on:change={(e) => updateProvider("fiveandtwo", "songOrigin", e.detail)} />
 {/if}
 
 <!-- OBS Studio Controller -->

@@ -161,7 +161,7 @@ export function isProjectLinked(project?: Project | null, projectId?: string, co
     // pre 1.6.6 backwards compatibility for projects without "origin"
     const id = projectId || project?.id
     if (id) {
-        if (id.startsWith("onstage_")) return true
+        if (id.startsWith("onstage_") || id.startsWith("fiveandtwo_")) return true
         const pcoPlans = contentProviderDataVal?.planningcenter?.availablePlans as { planId: string }[] | undefined
         if (pcoPlans?.some((p) => p.planId === id)) return true
     }
