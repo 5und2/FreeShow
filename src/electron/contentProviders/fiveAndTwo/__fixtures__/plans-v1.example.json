@@ -1,0 +1,176 @@
+{
+    "schema": "presentation/v1",
+    "organisation": {
+        "name": "Gemeinde am See",
+        "ccliLicenseNumber": "1234567"
+    },
+    "events": [
+        {
+            "id": "00000000-0000-4000-8000-00000000e001",
+            "title": "Gottesdienst",
+            "startsAt": "2026-10-18T08:00:00.000Z",
+            "endsAt": "2026-10-18T09:30:00.000Z",
+            "timezone": "Europe/Berlin",
+            "agenda": [
+                {
+                    "kind": "section",
+                    "id": "00000000-0000-4000-8000-00000000a001",
+                    "parentId": null,
+                    "title": "Ankommen und Lobpreis",
+                    "startsAt": "2026-10-18T08:00:00.000Z",
+                    "endsAt": "2026-10-18T08:00:00.000Z",
+                    "durationMinutes": null
+                },
+                {
+                    "kind": "item",
+                    "id": "00000000-0000-4000-8000-00000000a002",
+                    "parentId": "00000000-0000-4000-8000-00000000a001",
+                    "title": "Begrüßung",
+                    "startsAt": "2026-10-18T08:00:00.000Z",
+                    "endsAt": "2026-10-18T08:05:00.000Z",
+                    "durationMinutes": 5
+                },
+                {
+                    "kind": "song",
+                    "id": "00000000-0000-4000-8000-00000000a003",
+                    "parentId": "00000000-0000-4000-8000-00000000a001",
+                    "title": "Amazing Grace",
+                    "startsAt": "2026-10-18T08:05:00.000Z",
+                    "endsAt": "2026-10-18T08:10:00.000Z",
+                    "durationMinutes": 5,
+                    "song": {
+                        "songVersionId": "00000000-0000-4000-8000-000000005a01",
+                        "key": "A"
+                    }
+                },
+                {
+                    "kind": "song",
+                    "id": "00000000-0000-4000-8000-00000000a004",
+                    "parentId": "00000000-0000-4000-8000-00000000a001",
+                    "title": "Großer Gott, wir loben dich",
+                    "startsAt": "2026-10-18T08:10:00.000Z",
+                    "endsAt": "2026-10-18T08:14:00.000Z",
+                    "durationMinutes": 4,
+                    "song": {
+                        "songVersionId": "00000000-0000-4000-8000-000000005b02",
+                        "key": "F"
+                    }
+                },
+                {
+                    "kind": "section",
+                    "id": "00000000-0000-4000-8000-00000000a005",
+                    "parentId": null,
+                    "title": "Wort",
+                    "startsAt": "2026-10-18T08:14:00.000Z",
+                    "endsAt": "2026-10-18T08:14:00.000Z",
+                    "durationMinutes": null
+                },
+                {
+                    "kind": "item",
+                    "id": "00000000-0000-4000-8000-00000000a006",
+                    "parentId": "00000000-0000-4000-8000-00000000a005",
+                    "title": "Predigt",
+                    "startsAt": "2026-10-18T08:14:00.000Z",
+                    "endsAt": "2026-10-18T08:44:00.000Z",
+                    "durationMinutes": 30
+                }
+            ]
+        }
+    ],
+    "songs": [
+        {
+            "id": "00000000-0000-4000-8000-000000005a01",
+            "songId": "00000000-0000-4000-8000-000000005a00",
+            "title": "Amazing Grace",
+            "author": "John Newton",
+            "ccliNumber": "22025",
+            "versionLabel": null,
+            "versionNumber": 1,
+            "key": "G",
+            "parts": [
+                {
+                    "id": "p1",
+                    "label": "Strophe 1",
+                    "slides": [
+                        [
+                            {
+                                "chordPro": "A[G]mazing grace! How [C]sweet the [G]sound",
+                                "lyrics": "Amazing grace! How sweet the sound"
+                            },
+                            {
+                                "chordPro": "That saved a wretch like [D]me!",
+                                "lyrics": "That saved a wretch like me!"
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "id": "p2",
+                    "label": "Strophe 2",
+                    "slides": [
+                        [
+                            {
+                                "chordPro": "'Twas [G]grace that taught my [C]heart to [G]fear,",
+                                "lyrics": "'Twas grace that taught my heart to fear,"
+                            },
+                            {
+                                "chordPro": "And grace my fears re[D]lieved;",
+                                "lyrics": "And grace my fears relieved;"
+                            }
+                        ]
+                    ]
+                }
+            ],
+            "sequence": ["p1", "p2"],
+            "changeToken": "574f8210748347ca"
+        },
+        {
+            "id": "00000000-0000-4000-8000-000000005b02",
+            "songId": "00000000-0000-4000-8000-000000005b00",
+            "title": "Großer Gott, wir loben dich",
+            "author": "Ignaz Franz",
+            "ccliNumber": null,
+            "versionLabel": "Gemeinde-Fassung",
+            "versionNumber": 2,
+            "key": "F",
+            "parts": [
+                {
+                    "id": "p1",
+                    "label": "Strophe 1",
+                    "slides": [
+                        [
+                            {
+                                "chordPro": "[F]Großer Gott, wir [C]loben [F]dich;",
+                                "lyrics": "Großer Gott, wir loben dich;"
+                            },
+                            {
+                                "chordPro": "Herr, wir [Bb]preisen [C]deine [F]Stärke.",
+                                "lyrics": "Herr, wir preisen deine Stärke."
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "id": "p2",
+                    "label": "Refrain",
+                    "slides": [
+                        [
+                            {
+                                "chordPro": "[F]Heilig, heilig, [C]heilig",
+                                "lyrics": "Heilig, heilig, heilig"
+                            }
+                        ],
+                        [
+                            {
+                                "chordPro": "Herr Gott [Bb]Zeba[C]oth",
+                                "lyrics": "Herr Gott Zebaoth"
+                            }
+                        ]
+                    ]
+                }
+            ],
+            "sequence": ["p1", "p2", "p1"],
+            "changeToken": "07b1a577f37ed4a7"
+        }
+    ]
+}
